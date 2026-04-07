@@ -1,20 +1,32 @@
 name: Upstream Sync
 
+# 🔥 这一行直接永久消除 Node.js 20 警告
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: write
+  pull-requests: write
 
 on:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: upstream-sync-${{ github.repository }}
+  cancel-in-progress: true
+
 jobs:
   sync:
     runs-on: ubuntu-latest
+    if: ${{ github.event.repository.fork }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Sync
+      - name: Sync with Upstream
         uses: dabreadman/sync-upstream-repo@v1.3.0
         with:
           upstream_repo: KuekHaoYang/KVideo
