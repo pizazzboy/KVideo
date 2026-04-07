@@ -1,5 +1,9 @@
 name: Upstream Sync
 
+# 🔥 消除 Node.js 20 警告
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: write
   pull-requests: write
@@ -14,18 +18,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  sync_latest_from_upstream:
-    name: Sync latest commits from upstream repo
+  sync:
     runs-on: ubuntu-latest
     if: ${{ github.event.repository.fork }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Sync Upstream
+      # 🔥 零报错自动同步（彻底解决 exit 128 / 密码 / 用户名错误）
+      - name: Sync with Upstream
         uses: dabreadman/sync-upstream-repo@v1.3.0
         with:
           upstream_repo: KuekHaoYang/KVideo
