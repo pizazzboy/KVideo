@@ -2,7 +2,7 @@ name: Sync KVideo Repository
 on:
   # 手动触发
   workflow_dispatch:
-  # 定时触发（每天凌晨2点）
+  # 定时触发（每天凌晨9点）
   schedule:
     - cron: '0 9 * * *'
 
