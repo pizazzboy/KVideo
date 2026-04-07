@@ -1,0 +1,32 @@
+name: Sync KVideo Repository
+on:
+  # 手动触发
+  workflow_dispatch:
+  # 定时触发（每天凌晨2点）
+  schedule:
+    - cron: '0 9 * * *'
+
+jobs:
+  sync-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout self repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 拉取完整历史
+
+      - name: Add remote repository
+        run: |
+          git remote add upstream https://github.com/KuekHaoYang/KVideo.git
+          git fetch upstream
+
+      - name: Merge upstream changes
+        run: |
+          git checkout main  # 替换为你的主分支名（如master）
+          git merge upstream/main --no-edit || echo "Merge conflict, need manual resolve"
+
+      - name: Push changes to self repo
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          branch: main  # 替换为你的主分支名
